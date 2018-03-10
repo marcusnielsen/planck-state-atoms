@@ -2,7 +2,7 @@
   "name": "planck-state-atoms",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/marcusnielsen/planck-state-atoms",
+  "homepage": "http://marcusnielsen.github.io",
   "dependencies": {
     "gh-pages": "^1.1.0",
     "planck-state": "^5.2.3",

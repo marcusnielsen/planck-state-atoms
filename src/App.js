@@ -27,7 +27,11 @@ export const makeApp = () => {
 
   window.app = { buttons, theme };
 
-  setInterval(buttons.map(b => Object.values(b.actions)));
+  setInterval(() => {
+    const actions = [].concat(...buttons.map(b => Object.values(b.actions)));
+    const actionIndex = Math.floor(Math.random() * actions.length);
+    actions[actionIndex]();
+  }, 500);
 
   return () => (
     <Column theme={theme}>
