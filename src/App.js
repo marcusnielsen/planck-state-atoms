@@ -1,26 +1,40 @@
-import React, { Component } from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import { makeButton } from "./components/button";
+import React from "react";
+import {
+  Column,
+  Row,
+  makeButton,
+  H1,
+  makeTheme,
+  injectGlobalStyle
+} from "./components";
 
-const button = makeButton({ name: "my knapp" });
-window.button = button;
+export const makeApp = () => {
+  injectGlobalStyle();
+  const theme = makeTheme();
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <button.View />
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
-}
+  const buttons = [
+    "primaryMain",
+    "secondaryMain",
+    "primaryComplement",
+    "secondaryComplement"
+  ].map(style =>
+    makeButton({
+      name: style,
+      style: style,
+      theme
+    })
+  );
 
-export default App;
+  window.app = { buttons, theme };
+
+  setInterval(buttons.map(b => Object.values(b.actions)));
+
+  return () => (
+    <Column theme={theme}>
+      <Row theme={theme}>
+        <H1 theme={theme}>H1 title</H1>
+      </Row>
+      <Row theme={theme}>{buttons.map(b => <b.View />)}</Row>
+    </Column>
+  );
+};
