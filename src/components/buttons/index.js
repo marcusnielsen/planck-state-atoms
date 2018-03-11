@@ -20,45 +20,22 @@ export const makeButton = props => {
     "blur"
   ]);
 
-  const pushActionStream = Rx.Observable.of(disabled)
-    .filter(d => !d)
-    .concat(baseActionStreams.enable)
-    .switchMap(() =>
-      baseActionStreams.push.takeUntil(baseActionStreams.disable)
-    );
-
   const unpushActionStream = baseActionStreams.push.switchMap(() =>
-    Rx.Observable.of(null)
-      .delay(theme.animationLengths.medium)
-      .takeUntil(baseActionStreams.push)
+    Rx.Observable.of(null).delay(theme.animationLengths.medium)
   );
-
-  const focusActionStream = Rx.Observable.of(initialState.disabled)
-    .filter(disabled => !disabled)
-    .concat(baseActionStreams.enable)
-    .switchMap(() =>
-      baseActionStreams.focus.takeUntil(baseActionStreams.disable)
-    );
-
-  const blurActionStream = Rx.Observable.of(initialState.focused)
-    .filter(focused => focused)
-    .concat(focusActionStream)
-    .switchMap(() => baseActionStreams.blur.take(1));
 
   const actionStreams = {
     ...baseActionStreams,
-    push: pushActionStream,
-    unpush: unpushActionStream,
-    focus: focusActionStream,
-    blur: blurActionStream
+    unpush: unpushActionStream
   };
 
   const updaters = {
     enable: () => state => ({ ...state, disabled: false }),
     disable: () => state => ({ ...state, disabled: true }),
-    push: () => state => ({ ...state, pushed: true }),
+    push: () => state => (state.disabled ? state : { ...state, pushed: true }),
     unpush: () => state => ({ ...state, pushed: false }),
-    focus: () => state => ({ ...state, focused: true }),
+    focus: () => state =>
+      state.disabled ? state : { ...state, focused: true },
     blur: () => state => ({ ...state, focused: false })
   };
 
