@@ -35,10 +35,20 @@ export const makeReplayStream = props => {
   replayAllRec(buttons, replays, replays[0].timestamp, 0);
 };
 
-window.makeReplayStream = makeReplayStream;
+export const makeChaosMonkey = app => {
+  const { buttons, rowContainer, columnContainer, theme } = app;
 
-export const makeChaosMonkey = props => {
-  const { buttons } = props;
+  // setTimeout(() => {
+  //   theme.actions.setBaseAnimationLength(1000);
+  // }, 3000);
+
+  // setTimeout(() => {
+  //   columnContainer.actions.setDirectionToRow();
+  // }, 5000);
+
+  // setTimeout(() => {
+  //   rowContainer.actions.setDirectionToColumn();
+  // }, 10000);
 
   const actionStreams = [].concat(
     ...buttons.map((b, i) =>

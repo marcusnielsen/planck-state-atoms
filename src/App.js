@@ -1,10 +1,7 @@
 import React from "react";
 import {
-  Column,
-  Row,
+  makeContainer,
   makeButton,
-  H1,
-  H2,
   makeTheme,
   injectGlobalStyle
 } from "./components";
@@ -36,26 +33,45 @@ export const makeApp = () => {
     )
   );
 
-  makeChaosMonkey({ buttons, buttonStyles });
+  const columnContainer = makeContainer({ direction: "column", theme });
+  const rowContainer = makeContainer({ direction: "row", theme });
 
-  window.app = { buttons, theme };
+  const app = { buttons, theme, columnContainer, rowContainer };
+  makeChaosMonkey(app);
+
+  window.app = app;
 
   return () => (
-    <Column theme={theme}>
-      <Row theme={theme}>
-        <H1 theme={theme}>Planck-state-atoms</H1>
-      </Row>
-
-      <Row theme={theme}>
+    <columnContainer.View>
+      <rowContainer.View>
         {buttons.map((b, i) => (
-          <Column key={i} theme={theme}>
+          <columnContainer.View key={i}>
             <b.View />
-          </Column>
+          </columnContainer.View>
         ))}
-      </Row>
-      <Row theme={theme}>
-        <H2 theme={theme}>Open your terminal</H2>
-      </Row>
-    </Column>
+      </rowContainer.View>
+      <rowContainer.View>
+        <theme.View />
+      </rowContainer.View>
+    </columnContainer.View>
+    // <Column>
+    //   <Row>
+    //     <theme.View />
+    //   </Row>
+    //   <Row>
+    //     <H1>Planck-state-atoms</H1>
+    //   </Row>
+
+    //   <Row>
+    //     {buttons.map((b, i) => (
+    //       <Column key={i}>
+    //         <b.View />
+    //       </Column>
+    //     ))}
+    //   </Row>
+    //   <Row>
+    //     <H2>Open your terminal</H2>
+    //   </Row>
+    // </Column>
   );
 };

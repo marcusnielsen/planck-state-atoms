@@ -5,7 +5,7 @@
   "homepage": "http://marcusnielsen.github.io/planck-state-atoms",
   "dependencies": {
     "gh-pages": "^1.1.0",
-    "planck-state": "^5.2.3",
+    "planck-state": "^5.3.0",
     "polished": "^1.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
