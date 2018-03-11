@@ -6,6 +6,12 @@ import { makeActionSubjects, makeStateStream, makeView } from "planck-state";
 export const makeButton = props => {
   const { name, theme, disabled, style } = props;
 
+  const initialState = {
+    disabled,
+    pushed: false,
+    focused: false
+  };
+
   const { actions, actionStreams: baseActionStreams } = makeActionSubjects([
     "push",
     "enable",
@@ -14,19 +20,37 @@ export const makeButton = props => {
     "blur"
   ]);
 
+  const pushActionStream = Rx.Observable.of(disabled)
+    .filter(d => !d)
+    .concat(baseActionStreams.enable)
+    .switchMap(() =>
+      baseActionStreams.push.takeUntil(baseActionStreams.disable)
+    );
+
+  const unpushActionStream = baseActionStreams.push.switchMap(() =>
+    Rx.Observable.of(null)
+      .delay(theme.animationLengths.medium)
+      .takeUntil(baseActionStreams.push)
+  );
+
+  const focusActionStream = Rx.Observable.of(initialState.disabled)
+    .filter(disabled => !disabled)
+    .concat(baseActionStreams.enable)
+    .switchMap(() =>
+      baseActionStreams.focus.takeUntil(baseActionStreams.disable)
+    );
+
+  const blurActionStream = Rx.Observable.of(initialState.focused)
+    .filter(focused => focused)
+    .concat(focusActionStream)
+    .switchMap(() => baseActionStreams.blur.take(1));
+
   const actionStreams = {
     ...baseActionStreams,
-    unpush: baseActionStreams.push.switchMap(() =>
-      Rx.Observable.of(null)
-        .delay(theme.animationLengths.medium)
-        .takeUntil(baseActionStreams.push)
-    )
-  };
-
-  const initialState = {
-    disabled,
-    pushed: false,
-    focused: false
+    push: pushActionStream,
+    unpush: unpushActionStream,
+    focus: focusActionStream,
+    blur: blurActionStream
   };
 
   const updaters = {

@@ -21,13 +21,19 @@ export const makeApp = () => {
     "secondaryComplement"
   ];
 
-  const buttons = buttonStyles.map(style =>
-    makeButton({
-      name: style,
-      style: style,
-      disabled: false,
-      theme
-    })
+  const buttonDisabledStates = [true, false];
+
+  const buttons = [].concat(
+    ...buttonStyles.map(style =>
+      buttonDisabledStates.map(disabled =>
+        makeButton({
+          name: style,
+          style: style,
+          disabled,
+          theme
+        })
+      )
+    )
   );
 
   makeChaosMonkey({ buttons, buttonStyles });
@@ -40,7 +46,13 @@ export const makeApp = () => {
         <H1 theme={theme}>Planck-state-atoms</H1>
       </Row>
 
-      <Row theme={theme}>{buttons.map((b, i) => <b.View key={i} />)}</Row>
+      <Row theme={theme}>
+        {buttons.map((b, i) => (
+          <Column key={i} theme={theme}>
+            <b.View />
+          </Column>
+        ))}
+      </Row>
       <Row theme={theme}>
         <H2 theme={theme}>Open your terminal</H2>
       </Row>

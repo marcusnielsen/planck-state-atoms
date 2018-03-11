@@ -3,7 +3,8 @@ import React from "react";
 
 const ContainerStyled = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  flex-wrap: wrap;
+
   flex-direction: ${props => props.direction};
   margin: ${props => props.theme.margins.medium}px;
 `;

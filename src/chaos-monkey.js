@@ -63,6 +63,8 @@ export const makeChaosMonkey = props => {
         (localStorage.getItem("actionsLog") || "") + ";" + data
       );
     });
+
+    // NOTE: This is the chaos monkey
     // const actions = [].concat(...buttons.map(b => Object.values(b.actions)));
 
     // Rx.Observable.interval(2000).forEach(() => {
