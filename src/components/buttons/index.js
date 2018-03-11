@@ -1,24 +1,41 @@
 import React from "react";
+import Rx from "rxjs";
 import styled from "styled-components";
 import { makeActionSubjects, makeStateStream, makeView } from "planck-state";
 
 export const makeButton = props => {
   const { name, theme, disabled, style } = props;
 
-  const { actions, actionStreams } = makeActionSubjects([
+  const { actions, actionStreams: baseActionStreams } = makeActionSubjects([
     "push",
     "enable",
-    "disable"
+    "disable",
+    "focus",
+    "blur"
   ]);
 
+  const actionStreams = {
+    ...baseActionStreams,
+    unpush: baseActionStreams.push.switchMap(() =>
+      Rx.Observable.of(null)
+        .delay(theme.animationLengths.medium)
+        .takeUntil(baseActionStreams.push)
+    )
+  };
+
   const initialState = {
-    disabled
+    disabled,
+    pushed: false,
+    focused: false
   };
 
   const updaters = {
     enable: () => state => ({ ...state, disabled: false }),
     disable: () => state => ({ ...state, disabled: true }),
-    push: () => state => state
+    push: () => state => ({ ...state, pushed: true }),
+    unpush: () => state => ({ ...state, pushed: false }),
+    focus: () => state => ({ ...state, focused: true }),
+    blur: () => state => ({ ...state, focused: false })
   };
 
   const stateStream = makeStateStream({
@@ -31,24 +48,18 @@ export const makeButton = props => {
 
   const ButtonStyled = styled.button`
     cursor: pointer;
-    background-color: ${colorStyle};
+    background-color: ${props =>
+      props.pushed ? theme.modifyColors.lighten(colorStyle) : colorStyle};
     border: none;
     color: ${theme.grays.light};
     padding: ${theme.margins.large}px ${theme.margins.large * 2}px;
     text-align: center;
-    text-decoration: none;
+    text-decoration: ${props => (props.focused ? "underline" : "none")};
     display: inline-block;
     font-size: ${theme.fontSizes.medium}px;
     font-family: ${theme.fontFamilies.interactive};
     font-weight: bold;
     transition: ${theme.animationLengths.medium / 1000}s;
-    &:hover,
-    &:focus {
-      background: ${theme.modifyColors.darken(colorStyle)};
-    }
-    &:active {
-      background: ${theme.modifyColors.lighten(colorStyle)};
-    }
     &:disabled {
       cursor: not-allowed;
       background: ${theme.modifyColors.desaturate(colorStyle)};
@@ -56,7 +67,14 @@ export const makeButton = props => {
   `;
 
   const PureView = state => (
-    <ButtonStyled onClick={actions.push} disabled={state.disabled}>
+    <ButtonStyled
+      onClick={actions.push}
+      onFocus={actions.focus}
+      onBlur={actions.blur}
+      onMouseEnter={actions.focus}
+      onMouseLeave={actions.blur}
+      {...state}
+    >
       {name}
     </ButtonStyled>
   );
