@@ -1,13 +1,14 @@
 import React from "react";
-import Rx from "rxjs";
 import {
   Column,
   Row,
   makeButton,
   H1,
+  H2,
   makeTheme,
   injectGlobalStyle
 } from "./components";
+import { makeChaosMonkey } from "./chaos-monkey";
 
 export const makeApp = () => {
   injectGlobalStyle();
@@ -29,31 +30,20 @@ export const makeApp = () => {
     })
   );
 
+  makeChaosMonkey({ buttons, buttonStyles });
+
   window.app = { buttons, theme };
-
-  const actions = [].concat(...buttons.map(b => Object.values(b.actions)));
-
-  Rx.Observable.interval(2000).forEach(() => {
-    const actionIndex = Math.floor(Math.random() * actions.length);
-    actions[actionIndex]();
-  });
-
-  const actionStreams = [].concat(
-    ...buttons.map((b, i) =>
-      Object.entries(b.actionStreams).map(([key, val]) =>
-        val.map(() => `${buttonStyles[i]}#${key}`)
-      )
-    )
-  );
-
-  Rx.Observable.merge(...actionStreams).forEach(data => console.log(data));
 
   return () => (
     <Column theme={theme}>
       <Row theme={theme}>
-        <H1 theme={theme}>Open your terminal</H1>
+        <H1 theme={theme}>Planck-state-atoms</H1>
       </Row>
+
       <Row theme={theme}>{buttons.map((b, i) => <b.View key={i} />)}</Row>
+      <Row theme={theme}>
+        <H2 theme={theme}>Open your terminal</H2>
+      </Row>
     </Column>
   );
 };
