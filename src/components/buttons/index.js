@@ -20,24 +20,44 @@ export const makeButton = props => {
     "blur"
   ]);
 
-  const pushActionStream = Rx.Observable.of(disabled)
+  const enableActionStreamProxy = new Rx.Subject();
+
+  const disableActionStream = Rx.Observable.of(initialState.disabled)
+    .filter(disabled => !disabled)
+    // @TODO(MANI): don't use other action's baseActionStream.
+    // It's a circular dependency.
+    // Every time enable action is triggered, we will be able to disable.
+    // We should subscribe to enableActionStream instead.
+    .concat(enableActionStreamProxy)
+    .switchMap(() => baseActionStreams.disable.take(1));
+
+  const enableActionStream = Rx.Observable.of(initialState.disabled)
+    .filter(disabled => disabled)
+    .concat(disableActionStream)
+    .switchMap(() => baseActionStreams.enable.take(1))
+    .do(data => enableActionStreamProxy.next(data));
+
+  const pushActionStream = Rx.Observable.of(initialState.disabled)
     .filter(d => !d)
-    .concat(baseActionStreams.enable)
-    .switchMap(() =>
-      baseActionStreams.push.takeUntil(baseActionStreams.disable)
-    );
+    .concat(enableActionStream)
+    .switchMap(() => baseActionStreams.push.takeUntil(disableActionStream));
 
   const unpushActionStream = baseActionStreams.push.switchMap(() =>
     Rx.Observable.of(null)
       .delay(theme.animationLengths.medium)
-      .takeUntil(baseActionStreams.push)
+      .takeUntil(pushActionStream)
+      .take(1)
   );
 
-  const focusActionStream = Rx.Observable.of(initialState.disabled)
-    .filter(disabled => !disabled)
-    .concat(baseActionStreams.enable)
+  const focusActionStream = Rx.Observable.of(initialState)
+    .filter(initialState => !initialState.disabled && !initialState.focused)
+    .concat(
+      Rx.Observable.zip(enableActionStream, blurActionStream).switchMap(
+        () => blurActionStream
+      )
+    )
     .switchMap(() =>
-      baseActionStreams.focus.takeUntil(baseActionStreams.disable)
+      baseActionStreams.focus.takeUntil(disableActionStream).take(1)
     );
 
   const blurActionStream = Rx.Observable.of(initialState.focused)
@@ -47,6 +67,8 @@ export const makeButton = props => {
 
   const actionStreams = {
     ...baseActionStreams,
+    enable: enableActionStream,
+    disable: disableActionStream,
     push: pushActionStream,
     unpush: unpushActionStream,
     focus: focusActionStream,
