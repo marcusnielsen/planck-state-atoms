@@ -5286,9 +5286,9 @@ pkginfo@0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/pkginfo/-/pkginfo-0.4.1.tgz#b5418ef0439de5425fc4995042dced14fb2a84ff"
 
-planck-state@^5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/planck-state/-/planck-state-5.3.0.tgz#645aa8e9dd345fd2f3ff62205b64f206a60a4756"
+planck-state@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/planck-state/-/planck-state-5.6.0.tgz#25698a7496ec2180dbb257d2524fd041919d9348"
   dependencies:
     react "^16.2.0"
     react-dom "^16.2.0"
@@ -6223,8 +6223,8 @@ rx@^4.1.0:
   resolved "https://registry.yarnpkg.com/rx/-/rx-4.1.0.tgz#a5f13ff79ef3b740fe30aa803fb09f98805d4782"
 
 rxjs@^5.5.6:
-  version "5.5.6"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.6.tgz#e31fb96d6fd2ff1fd84bcea8ae9c02d007179c02"
+  version "5.5.7"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.7.tgz#afb3d1642b069b2fbf203903d6501d1acb4cda27"
   dependencies:
     symbol-observable "1.0.1"
 

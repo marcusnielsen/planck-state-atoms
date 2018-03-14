@@ -23,6 +23,9 @@ export const makeTheme = () => {
     animationLengths: {
       medium: 200
     },
+    borderThickness: {
+      medium: 3
+    },
     fontFamilies: {
       interactive: '"Montserrat", "Trebuchet MS", Helvetica, sans-serif',
       large: "Georgia"
