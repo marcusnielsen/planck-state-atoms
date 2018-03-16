@@ -73,6 +73,10 @@ export const makeButton = props => {
     }
   `;
 
+  const onClick = () => actions.push();
+  const onFocus = () => actions.focus();
+  const onBlur = () => actions.blur();
+
   const PureView = states => {
     const { self, theme } = states;
 
@@ -80,11 +84,11 @@ export const makeButton = props => {
 
     return (
       <ButtonStyled
-        onClick={actions.push}
-        onFocus={actions.focus}
-        onBlur={actions.blur}
-        onMouseEnter={actions.focus}
-        onMouseLeave={actions.blur}
+        onClick={onClick}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        onMouseEnter={onFocus}
+        onMouseLeave={onBlur}
         disabled={self.disabled}
         colorStyle={colorStyle}
         theme={theme}

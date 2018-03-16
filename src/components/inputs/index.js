@@ -9,7 +9,7 @@ import {
 } from "planck-state";
 
 export const makeInput = props => {
-  const { theme, id, name } = props;
+  const { theme, id, name, setValueAsyncService } = props;
 
   const initialState = {
     value: "",
@@ -42,10 +42,7 @@ export const makeInput = props => {
   };
 
   const services = {
-    setValueAsync: value =>
-      Rx.Observable.of({ success: true, body: value })
-        .delay(2000)
-        .take(1)
+    setValueAsync: setValueAsyncService
   };
 
   const epicsStream = makeEpics({
@@ -96,11 +93,12 @@ export const makeInput = props => {
     const { self, theme } = props;
     const { value } = self;
 
-    console.log(theme);
+    console.log("self.value", self.value);
 
     return (
       <ContainerStyled theme={theme}>
         <InputStyled
+          type="text"
           value={value}
           onChange={onChange}
           theme={theme}
