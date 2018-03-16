@@ -93,8 +93,6 @@ export const makeInput = props => {
     const { self, theme } = props;
     const { value } = self;
 
-    console.log("self.value", self.value);
-
     return (
       <ContainerStyled theme={theme}>
         <InputStyled

@@ -63,9 +63,7 @@ export const makeChaosMonkey = app => {
     ...Object.entries(flattenedComponents).map(([path, component]) =>
       Object.entries(component.actionStreams).map(([key, val]) =>
         val.map(
-          data =>
-            console.log("data", data) ||
-            `${path}#${key}>${JSON.stringify(data || "")}T${Date.now()}`
+          data => `${path}#${key}>${JSON.stringify(data || "")}T${Date.now()}`
         )
       )
     )
