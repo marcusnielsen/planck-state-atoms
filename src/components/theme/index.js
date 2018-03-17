@@ -85,9 +85,14 @@ export const makeTheme = () => {
     PureView
   });
 
+  const actionDefinitions = {
+    setBaseAnimationLength: { type: "integer", from: 0, to: 10000 }
+  };
+
   return {
     actions,
     actionStreams,
+    actionDefinitions,
     stateStream,
     View
   };

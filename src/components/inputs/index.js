@@ -121,9 +121,17 @@ export const makeInput = props => {
     PureView
   });
 
+  const actionDefinitions = {
+    setValueAsync: { type: "words", max: 20 },
+    setValueAsyncSucceeded: { type: "words", max: 20 },
+    setValueAsyncFailed: { type: "error" },
+    resetValue: { type: "undefined" }
+  };
+
   return {
     actions,
     actionStreams,
+    actionDefinitions,
     stateStream,
     View
   };

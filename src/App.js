@@ -54,12 +54,9 @@ export const makeApp = () => {
   const rowContainer = makeContainer({ direction: "row", theme });
 
   const app = {
-    actions: {
-      nullAction: () => null
-    },
-    actionStreams: {
-      nullAction: Rx.Observable.empty()
-    },
+    actions: {},
+    actionStreams: {},
+    actionDefinitions: {},
     children: { ...buttons, input, theme, columnContainer, rowContainer }
   };
 

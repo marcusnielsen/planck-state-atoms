@@ -108,9 +108,18 @@ export const makeButton = props => {
     PureView
   });
 
+  const actionDefinitions = {
+    push: { type: "undefined" },
+    enable: { type: "undefined" },
+    disable: { type: "undefined" },
+    focus: { type: "undefined" },
+    blur: { type: "undefined" }
+  };
+
   return {
     actions,
     actionStreams,
+    actionDefinitions,
     stateStream,
     View
   };

@@ -1,4 +1,5 @@
 import Rx from "rxjs";
+import * as casual from "casual-browserify";
 
 const flattenComponentTreeRec = (path, node) => {
   if (!node.children) {
@@ -71,8 +72,6 @@ export const makeChaosMonkey = app => {
 
   const allActionsStream = Rx.Observable.merge(...actionStreams);
 
-  //   allActionsStream.forEach(data => console.log(data));
-
   const actionsLog = localStorage.getItem("actionsLog");
 
   if (actionsLog) {
@@ -82,18 +81,53 @@ export const makeChaosMonkey = app => {
     });
   } else {
     allActionsStream.forEach(data => {
+      console.log(data);
       localStorage.setItem(
         "actionsLog",
         (localStorage.getItem("actionsLog") || "") + ";" + data
       );
     });
 
-    // NOTE: This is the chaos monkey
-    // const actions = [].concat(...buttons.map(b => Object.values(b.actions)));
+    const toArgument = actionDefinition => {
+      switch (actionDefinition.type) {
+        case "undefined":
+          return undefined;
+        case "words":
+          return casual.words(casual.integer(0, actionDefinition.max));
+        case "integer":
+          return casual.integer(actionDefinition.from, actionDefinition.to);
+        case "error":
+          return casual.sentence;
+        default:
+          throw new Error(
+            `No such actionDefinition.type [${actionDefinition.type}].`
+          );
+      }
+    };
 
-    // Rx.Observable.interval(2000).forEach(() => {
-    //   const actionIndex = Math.floor(Math.random() * actions.length);
-    //   actions[actionIndex]();
-    // });
+    // NOTE: This is the chaos monkey
+    const actionsAndArguments = [].concat(
+      ...Object.values(flattenedComponents).map(c =>
+        Object.entries(c.actions).map(
+          ([key, action]) =>
+            console.log("c", c) || {
+              action,
+              argument: toArgument(c.actionDefinitions[key])
+            }
+        )
+      )
+    );
+
+    console.log(actionsAndArguments);
+
+    Rx.Observable.interval(500).forEach(() => {
+      const actionIndex = Math.floor(
+        Math.random() * actionsAndArguments.length
+      );
+
+      actionsAndArguments[actionIndex].action(
+        actionsAndArguments[actionIndex].argument
+      );
+    });
   }
 };

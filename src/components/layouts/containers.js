@@ -47,9 +47,15 @@ export const makeContainer = props => {
     PureView
   });
 
+  const actionDefinitions = {
+    setDirectionToRow: { type: "undefined" },
+    setDirectionToColumn: { type: "undefined" }
+  };
+
   return {
     actions,
     actionStreams,
+    actionDefinitions,
     stateStream,
     View
   };
