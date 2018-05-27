@@ -1,90 +1,45 @@
-import React from "react";
-import Rx from "rxjs";
-import {
-  makeContainer,
-  makeInput,
-  makeButton,
-  makeTheme,
-  H1,
-  H2,
-  injectGlobalStyle
-} from "./components";
-import { makeChaosMonkey } from "./components/chaos-monkey";
+import React, { Fragment } from "react";
+import { makeButtonsStory } from "./components/buttons/story";
+import { makeInputsStory } from "./components/inputs/story";
+import { makeLayoutsStory } from "./components/layouts/story";
+import { makeTextssStory } from "./components/texts/story";
 
-export const makeApp = () => {
-  injectGlobalStyle();
-  const theme = makeTheme();
+export const makeApp = theme => {
+  // return () => (
+  //   <columnContainer.View>
+  //     <rowContainer.View>
+  //       <h1.View>Planck-state-atoms</h1.View>
+  //     </rowContainer.View>
+  //     <rowContainer.View>
+  //       <h2.View>Overpowered stateful components</h2.View>
+  //     </rowContainer.View>
+  //     <rowContainer.View>
+  //       {Object.entries(buttons).map(([key, button]) => (
+  //         <columnContainer.View key={key}>
+  //           <button.View />
+  //         </columnContainer.View>
+  //       ))}
+  //     </rowContainer.View>
+  //     <rowContainer.View>
+  //       <input.View />
+  //     </rowContainer.View>
+  //     <rowContainer.View>
+  //       <settings.View />
+  //     </rowContainer.View>
+  //   </columnContainer.View>
+  // );
 
-  const buttonStyles = [
-    "primaryMain",
-    "secondaryMain",
-    "primaryComplement",
-    "secondaryComplement"
-  ];
-
-  const buttonDisabledStates = [true, false];
-
-  const buttons = buttonStyles.reduce((acc, style) => {
-    Object.assign(
-      acc,
-      buttonDisabledStates.reduce((innerAcc, disabled) => {
-        innerAcc[`${style}_${disabled}`] = makeButton({
-          name: style,
-          style: style,
-          disabled,
-          theme
-        });
-        return innerAcc;
-      }, {})
-    );
-    return acc;
-  }, {});
-
-  const input = makeInput({
-    theme,
-    id: "abc-123",
-    name: "my input",
-    setValueAsyncService: value =>
-      Rx.Observable.of({ success: true, body: value })
-        .delay(2000)
-        .take(1)
-  });
-
-  const columnContainer = makeContainer({ direction: "column", theme });
-  const rowContainer = makeContainer({ direction: "row", theme });
-
-  const app = {
-    actions: {},
-    actionStreams: {},
-    actionDefinitions: {},
-    children: { ...buttons, input, theme, columnContainer, rowContainer }
-  };
-
-  makeChaosMonkey(app);
-
-  window.app = app;
+  const ButtonStory = makeButtonsStory(theme);
+  const InputStory = makeInputsStory(theme);
+  const LayoutsStory = makeLayoutsStory(theme);
+  const TextsStory = makeTextssStory(theme);
 
   return () => (
-    <columnContainer.View>
-      <rowContainer.View>
-        <H1>Planck-state-atoms</H1>
-      </rowContainer.View>
-      <rowContainer.View>
-        <H2>Open your terminal</H2>
-      </rowContainer.View>
-      <rowContainer.View>
-        {Object.entries(buttons).map(([key, button]) => (
-          <columnContainer.View key={key}>
-            <button.View />
-          </columnContainer.View>
-        ))}
-      </rowContainer.View>
-      <rowContainer.View>
-        <input.View />
-      </rowContainer.View>
-      <rowContainer.View>
-        <theme.View />
-      </rowContainer.View>
-    </columnContainer.View>
+    <Fragment>
+      <ButtonStory />
+      <InputStory />
+      <LayoutsStory />
+      <TextsStory />
+    </Fragment>
   );
 };

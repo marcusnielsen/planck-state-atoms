@@ -21,11 +21,7 @@ export const makeButton = props => {
   ]);
 
   const unpushActionStream = baseActionStreams.push.switchMap(() =>
-    theme.stateStream
-      .take(1)
-      .flatMap(state =>
-        Rx.Observable.of(null).delay(state.animationLengths.medium)
-      )
+    Rx.Observable.of(null).delay(theme.animationLengths.medium)
   );
 
   const actionStreams = {
@@ -53,23 +49,22 @@ export const makeButton = props => {
     cursor: pointer;
     background-color: ${props =>
       props.self.pushed
-        ? props.theme.modifyColors.darken(props.colorStyle)
+        ? theme.modifyColors.darken(props.colorStyle)
         : props.colorStyle};
     border: none;
-    color: ${props => props.theme.grays.light};
-    padding: ${props => props.theme.margins.large}px
-      ${props => props.theme.margins.large * 2}px;
+    color: ${props => theme.grays.light};
+    padding: ${props => theme.margins.large}px
+      ${props => theme.margins.large * 2}px;
     text-align: center;
     text-decoration: ${props => (props.self.focused ? "underline" : "none")};
     display: inline-block;
-    font-size: ${props => props.theme.fontSizes.medium}px;
-    font-family: ${props => props.theme.fontFamilies.interactive};
+    font-size: ${props => theme.fontSizes.medium}px;
+    font-family: ${props => theme.fontFamilies.interactive};
     font-weight: bold;
-    transition: ${props => props.theme.animationLengths.medium / 1000}s;
+    transition: ${props => theme.animationLengths.medium / 1000}s;
     &:disabled {
       cursor: not-allowed;
-      background: ${props =>
-        props.theme.modifyColors.desaturate(props.colorStyle)};
+      background: ${props => theme.modifyColors.desaturate(props.colorStyle)};
     }
   `;
 
@@ -77,9 +72,7 @@ export const makeButton = props => {
   const onFocus = () => actions.focus();
   const onBlur = () => actions.blur();
 
-  const PureView = states => {
-    const { self, theme } = states;
-
+  const PureView = state => {
     const colorStyle = theme.colors[style];
 
     return (
@@ -89,10 +82,9 @@ export const makeButton = props => {
         onBlur={onBlur}
         onMouseEnter={onFocus}
         onMouseLeave={onBlur}
-        disabled={self.disabled}
+        disabled={state.disabled}
         colorStyle={colorStyle}
-        theme={theme}
-        self={self}
+        self={state}
       >
         {name}
       </ButtonStyled>
@@ -100,26 +92,13 @@ export const makeButton = props => {
   };
 
   const View = makeView({
-    viewStateStream: Rx.Observable.combineLatest(
-      stateStream,
-      theme.stateStream,
-      (self, theme) => ({ self, theme })
-    ),
+    viewStateStream: stateStream,
     PureView
   });
-
-  const actionDefinitions = {
-    push: { type: "undefined" },
-    enable: { type: "undefined" },
-    disable: { type: "undefined" },
-    focus: { type: "undefined" },
-    blur: { type: "undefined" }
-  };
 
   return {
     actions,
     actionStreams,
-    actionDefinitions,
     stateStream,
     View
   };
