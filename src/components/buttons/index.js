@@ -1,5 +1,6 @@
 import React from "react";
-import Rx from "rxjs";
+import { of } from "rxjs";
+import { switchMap, delay } from "rxjs/operators";
 import styled from "styled-components";
 import { makeActionSubjects, makeStateStream, makeView } from "planck-state";
 
@@ -20,8 +21,8 @@ export const makeButton = props => {
     "blur"
   ]);
 
-  const unpushActionStream = baseActionStreams.push.switchMap(() =>
-    Rx.Observable.of(null).delay(theme.animationLengths.medium)
+  const unpushActionStream = baseActionStreams.push.pipe(
+    switchMap(() => of(null).pipe(delay(theme.animationLengths.medium)))
   );
 
   const actionStreams = {

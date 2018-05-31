@@ -1,55 +1,19 @@
 import styled from "styled-components";
 import React from "react";
-import Rx from "rxjs";
-import {
-  makeActionSubjects,
-  makeStateStream,
-  makeView,
-  makeEpics
-} from "planck-state";
+import { makeActionSubjects, makeStateStream, makeView } from "planck-state";
 
 export const makeInput = props => {
-  const { theme, id, name, setValueAsyncService } = props;
+  const { theme, id, name } = props;
 
   const initialState = {
-    value: "",
-    persistedValue: "",
-    error: null,
-    loading: null
+    value: ""
   };
 
-  const { actions, actionStreams } = makeActionSubjects([
-    "setValueAsync",
-    "setValueAsyncSucceeded",
-    "setValueAsyncFailed",
-    "resetValue"
-  ]);
+  const { actions, actionStreams } = makeActionSubjects(["setValue"]);
 
   const updaters = {
-    resetValue: () => state => ({ ...state, value: state.persistedValue }),
-    setValueAsync: value => state => ({ ...state, value, loading: true }),
-    setValueAsyncSucceeded: persistedValue => state => ({
-      ...state,
-      persistedValue,
-      error: initialState.error,
-      loading: false
-    }),
-    setValueAsyncFailed: error => state => ({
-      ...state,
-      error,
-      loading: false
-    })
+    setValue: value => state => ({ ...state, value })
   };
-
-  const services = {
-    setValueAsync: setValueAsyncService
-  };
-
-  const epicsStream = makeEpics({
-    actions,
-    actionStreams,
-    services
-  });
 
   const stateStream = makeStateStream({
     initialState,
@@ -58,7 +22,7 @@ export const makeInput = props => {
   });
 
   const onChange = domEvent => {
-    actions.setValueAsync(domEvent.target.value);
+    actions.setValue(domEvent.target.value);
   };
 
   const InputStyled = styled.input`
@@ -75,17 +39,13 @@ export const makeInput = props => {
     &::placeholder {
       color: ${props => theme.modifyColors.desaturate(theme.grays.light)};
     }
+    width: 100%;
   `;
 
   const ContainerStyled = styled.div`
     border: ${props => theme.borderThickness.medium}px solid
       ${props => theme.colors.primaryMain};
-  `;
-
-  const StatusStyled = styled.span`
-    font-size: ${props => theme.fontSizes.medium}px;
-    padding: ${props => theme.margins.medium}px
-      ${props => theme.margins.medium}px;
+    position: relative;
   `;
 
   const LabelStyled = styled.label`
@@ -110,18 +70,13 @@ export const makeInput = props => {
             placeholder={persistedValue}
             focused={state.focused}
           />
-          <StatusStyled>{value === persistedValue ? "😇" : "😴"}</StatusStyled>
         </ContainerStyled>
       </div>
     );
   };
 
   const View = makeView({
-    viewStateStream: Rx.Observable.combineLatest(
-      stateStream,
-      epicsStream.startWith(null),
-      state => state
-    ),
+    viewStateStream: stateStream,
     PureView
   });
 

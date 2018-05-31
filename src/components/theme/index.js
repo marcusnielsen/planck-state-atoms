@@ -32,7 +32,8 @@ export const makeTheme = () => ({
   },
   margins: {
     medium: 5,
-    large: 15
+    large: 15,
+    jumbo: 45
   },
   colors: {
     primaryMain: "#4caf50",

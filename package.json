@@ -1,18 +1,20 @@
 {
   "name": "planck-state-atoms",
-  "version": "1.0.0",
-  "private": true,
+  "version": "1.0.1",
   "homepage": "http://marcusnielsen.github.io/planck-state-atoms",
   "dependencies": {
     "casual-browserify": "^1.5.12",
     "gh-pages": "^1.1.0",
-    "planck-state": "^5.6.0",
+    "planck-state": "^6.0.0",
     "polished": "^1.9.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-scripts": "1.1.1",
+    "rxjs": "^6.2.0",
     "serve": "^6.5.2",
-    "styled-components": "^3.2.1"
+    "styled-components": "^3.2.1",
+    "uuid": "^3.2.1",
+    "ws": "^5.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
